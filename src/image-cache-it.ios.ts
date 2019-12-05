@@ -1,11 +1,12 @@
 import * as common from './image-cache-it.common';
-import { ImageCacheItBase } from './image-cache-it.common';
+import {ImageCacheItBase, SimpleHeader} from './image-cache-it.common';
 import * as imageSrc from 'tns-core-modules/image-source';
-import { layout } from 'tns-core-modules/ui/core/view';
+import {layout} from 'tns-core-modules/ui/core/view';
 import * as fs from 'tns-core-modules/file-system';
 import * as types from 'tns-core-modules/utils/types';
-import { Length } from 'tns-core-modules/ui/styling/style-properties';
+import {Length} from 'tns-core-modules/ui/styling/style-properties';
 import * as app from 'tns-core-modules/application';
+import {ImageSource} from 'tns-core-modules/image-source';
 
 declare var SDWebImageManager, SDWebImageOptions, SDImageCacheType, SDImageCache;
 
@@ -54,7 +55,7 @@ export class ImageCacheIt extends ImageCacheItBase {
                 this.isLoading = true;
                 const context = {};
                 const placeholder = this.placeHolder
-                    ? imageSrc.fromFileOrResource(this.placeHolder).ios
+                    ? (imageSrc.fromFileOrResource(this.placeHolder) ? imageSrc.fromFileOrResource(this.placeHolder).ios : null)
                     : null;
                 (<any>this.nativeView).sd_setImageWithURLPlaceholderImageOptionsContextProgressCompleted(
                     src,
@@ -389,7 +390,7 @@ export class ImageCacheIt extends ImageCacheItBase {
     public static hasItem(src: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const manager = SDWebImageManager.sharedManager;
-            if (manager) {
+            if (manager && manager.imageCache && src) {
                 const key = manager.cacheKeyForURL(NSURL.URLWithString(src));
                 manager.imageCache.containsImageForKeyCacheTypeCompletion(key, 3 /* All */, (type) => {
                     if (type > 0) {
@@ -474,6 +475,23 @@ export class ImageCacheIt extends ImageCacheItBase {
                         }
                     });
                 }
+            } else {
+                reject();
+            }
+        });
+    }
+
+    public static storeItem(url: string, src: any, header?: SimpleHeader) {
+        return new Promise<any>((resolve, reject) => {
+            const manager = SDWebImageManager.sharedManager;
+            if (manager) {
+                const nativeUrl = NSURL.URLWithString(url);
+                const sharedCache = SDImageCache.sharedImageCache;
+                sharedCache.storeImageForKeyCompletion(src, nativeUrl.absoluteString, () => {
+                    const key = manager.cacheKeyForURL(nativeUrl);
+                    const source = manager.imageCache.cachePathForKey(key);
+                    resolve(source);
+                });
             } else {
                 reject();
             }

@@ -11,8 +11,49 @@ refer to http://docs.nativescript.org/ui/theme.
 */
 @import '~nativescript-theme-core/css/core.light.css';
 
+.page {
+    height: 100%;
+    padding: 10;
+}
+
+.toolbar {
+    horiz-align: center;
+    margin: 20 0;
+}
+
+.statusbar {
+    margin: 10 0 30;
+    padding: 10 20;
+}
+
 .image {
     border-radius: 50;
     border-width: 1;
     border-color: red;
+}
+
+Button {
+    background-color: #999999;
+    border-radius: 10;
+    color: #FFFFFF;
+    margin: 0 20;
+    padding: 10 20;
+}
+
+.warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }

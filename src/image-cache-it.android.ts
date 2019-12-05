@@ -1,5 +1,5 @@
 import * as common from './image-cache-it.common';
-import { filterProperty, ImageCacheItBase } from './image-cache-it.common';
+import {filterProperty, ImageCacheItBase, SimpleHeader} from './image-cache-it.common';
 import * as fs from 'tns-core-modules/file-system';
 import * as utils from 'tns-core-modules/utils/utils';
 import * as types from 'tns-core-modules/utils/types';
@@ -18,8 +18,8 @@ import {
     borderTopWidthProperty
 } from 'tns-core-modules/ui/core/view';
 import * as app from 'tns-core-modules/application';
-import { ImageSource } from 'tns-core-modules/image-source';
-import { Background } from 'tns-core-modules/ui/styling/background';
+import {ImageSource} from 'tns-core-modules/image-source';
+import {Background} from 'tns-core-modules/ui/styling/background';
 
 global.moduleMerge(common, exports);
 declare let jp, com, androidx;
@@ -290,6 +290,29 @@ export class ImageCacheIt extends ImageCacheItBase {
         }
     }
 
+    public static storeItem(url: string, src: any, header?: SimpleHeader): Promise<any> {
+        com.github.triniwiz.imagecacheit.ImageCache.init(app.android.context);
+
+        let headerName = null;
+        let headerValue = null;
+
+        if (header) {
+            headerName = header.name;
+            headerValue = header.value;
+        }
+
+        return new Promise<any>((resolve, reject) => {
+            com.github.triniwiz.imagecacheit.ImageCache.storeItem(url, headerName, headerValue, null, new com.github.triniwiz.imagecacheit.ImageCache.Callback({
+                onSuccess(value) {
+                    resolve(value);
+                },
+                onError(error) {
+                    reject(error.getMessage());
+                }
+            }));
+        });
+    }
+
     public static getItem(src: string): Promise<any> {
         com.github.triniwiz.imagecacheit.ImageCache.init(app.android.context);
         return new Promise<any>((resolve, reject) => {
@@ -334,13 +357,10 @@ export class ImageCacheIt extends ImageCacheItBase {
     }
 
     public static enableAutoMM() {
-        (com as any).github.triniwiz.imagecacheit.ImageView.enableAutoMM(app.android.nativeApp)
+        (com as any).github.triniwiz.imagecacheit.ImageView.enableAutoMM(app.android.nativeApp);
     }
 
     public static disableAutoMM() {
-        (com as any).github.triniwiz.imagecacheit.ImageView.disableAutoMM(app.android.nativeApp)
+        (com as any).github.triniwiz.imagecacheit.ImageView.disableAutoMM(app.android.nativeApp);
     }
 }
-
-
-

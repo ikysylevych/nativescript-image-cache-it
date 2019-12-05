@@ -23,15 +23,16 @@ These components make use of several CSS class names that are part of the Native
 core theme, such as p-20, btn, h2, and list-group. You can view a full list of the
 class names available for styling your app at https://docs.nativescript.org/ui/theme.
 -->
-<GridLayout class="page" height="100%">
-    <ListView [items]="items | async" class="list-group">
-        <ng-template let-item="item">
-            <GridLayout class="list-group-item" columns="auto,*" [nsRouterLink]="['/item', item.id]" [text]="item.name">
-                <image-component styling="image" placeHolder="res://place_holder" errorHolder="res://error_holder" [stretch]="stretch" width="100" height="100" [src]="item.url"></image-component>
-                <StackLayout col="1">
-                    <Label [text]="item.url"></Label>
-                </StackLayout>
-            </GridLayout>
-        </ng-template>
-    </ListView>
+<GridLayout class="page" rows="auto, auto, auto">
+
+    <GridLayout row="0" rows="auto" columns="*, *" class="toolbar">
+        <Button column="0" text="Reload image" (tap)="reloadImage()"></Button>
+        <Button column="1" text="Clear cache" *ngIf="isAndroid" (tap)="clearCache()"></Button>
+        <Button column="1" text="Delete image" *ngIf="!isAndroid" (tap)="deleteImage()"></Button>
+    </GridLayout>
+
+    <Label row="1" [class]="'statusbar ' + statusCls" [text]="status"></Label>
+
+    <Image row="2" stretch="aspectFill" loadMode="async" [src]="src"></Image>
+
 </GridLayout>

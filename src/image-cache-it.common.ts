@@ -65,3 +65,13 @@ decodedWidthProperty.register(ImageCacheItBase);
 filterProperty.register(Style);
 transitionProperty.register(ImageCacheItBase);
 fallbackProperty.register(ImageCacheItBase);
+
+export class SimpleHeader {
+    public name: string;
+    public value: string;
+
+    public constructor(name: string, value: string) {
+        this.name = name;
+        this.value = value;
+    }
+}
